@@ -468,6 +468,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 606015673}
+    - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+      propertyPath: burgerHolder
+      value: 
+      objectReference: {fileID: 8882185590315298315, guid: 5629b79cfaeedfb45b0cbd223be12ce2, type: 3}
+    - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+      propertyPath: burgerPrefab
+      value: 
+      objectReference: {fileID: 7608600567876243077, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+    - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
       propertyPath: burger_speed
       value: 3
       objectReference: {fileID: 0}
@@ -479,6 +491,10 @@ PrefabInstance:
       propertyPath: burger_prefab
       value: 
       objectReference: {fileID: 7608600567876243077, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+    - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
+      propertyPath: burgerStartPos.y
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: -7842257702974710528, guid: 80af98864c1a7054f8b127f8860199e8, type: 3}
       propertyPath: burger_start_pos.y
       value: 5
