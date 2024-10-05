@@ -2,62 +2,87 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class new_code : MonoBehaviour
+public class BurgerStacker : MonoBehaviour
 {
+    [SerializeField] private Transform burgerPrefab;
+    [SerializeField] private Transform burgerHolder;
 
-    [SerializeField] private Transform burger_prefab;
-    [SerializeField] private Transform burger_holder;
+    private Transform currentBurger = null;
+    private Rigidbody2D currentRigidbody;
 
-    private Transform current_burger = null;
-    private Rigidbody2D current_rigidbody;
+    public float burgerSpeed = 8f;
+    public float burgerSpeedIncrement = 0.5f;
+    public int burgerDirection = 1;
 
-    public float burger_speed = 8f;
-    public float burger_speed_ýncerement = 0.5f;
-    public int burger_direction = 1;
+    public Vector2 burgerStartPos;
+    public int xLimit = 5;
 
-    public Vector2 burger_start_pos;
+    // Ýlk burgeri referans olarak tutmak için
+    private Transform firstBurger = null;
+    public float tolerance = 0.5f; // Burgerlerin hizalanmasý için tolerans deðeri
 
-    public int x_limit = 5;
     void Start()
     {
-
-        spawn_new_burger();
+        SpawnNewBurger();
     }
-
 
     void Update()
     {
-        if (current_burger)
+        if (currentBurger)
         {
-            float move_amount = Time.deltaTime * burger_speed * burger_direction;
-            current_burger.position += new Vector3(move_amount,0,0);
-            if (Mathf.Abs(current_burger.position.x)> x_limit)
+            // Burgerin hareket etmesi
+            float moveAmount = Time.deltaTime * burgerSpeed * burgerDirection;
+            currentBurger.position += new Vector3(moveAmount, 0, 0);
+
+            // X limitlerine ulaþýnca yön deðiþtir
+            if (Mathf.Abs(currentBurger.position.x) > xLimit)
             {
-                current_burger.position = new Vector3(burger_direction*x_limit,current_burger.position.y,0);
-
-                burger_direction = -burger_direction;
-
+                currentBurger.position = new Vector3(burgerDirection * xLimit, currentBurger.position.y, 0);
+                burgerDirection = -burgerDirection;
             }
 
+            // Space tuþuna basýnca burgeri býrak ve yeni burger spawn et
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                current_burger = null;
-                current_rigidbody.simulated = true;
-                spawn_new_burger();
-            }
+                currentRigidbody.simulated = true; // Burgerin düþmesini baþlat
 
+                // Ýlk burgeri referans olarak sakla
+                if (firstBurger == null)
+                {
+                    firstBurger = currentBurger;
+                }
+                else
+                {
+                    // Sonraki burgerler için tolerans kontrolü
+                    float xDifference = Mathf.Abs(currentBurger.position.x - firstBurger.position.x);
+
+                    if (xDifference <= tolerance)
+                    {
+                        Debug.Log("iyi!");
+                    }
+                    else
+                    {
+                        Debug.Log("fark " + xDifference);
+                    }
+                }
+
+                currentBurger = null; // Mevcut burgeri sýfýrla
+                SpawnNewBurger(); // Yeni burger spawn et
+            }
         }
-        
     }
 
-    private void spawn_new_burger()
+    private void SpawnNewBurger()
     {
-        current_burger = Instantiate(burger_prefab,burger_holder);
-        current_burger.position = burger_start_pos;
-        current_rigidbody = current_burger.GetComponent<Rigidbody2D>();
-        burger_speed += burger_speed_ýncerement;
+        // Yeni burger oluþtur
+        currentBurger = Instantiate(burgerPrefab, burgerHolder);
+        currentBurger.position = burgerStartPos;
+        currentRigidbody = currentBurger.GetComponent<Rigidbody2D>();
 
+        // Yeni burger düþtüðü anda fizik simülasyonunu devre dýþý býrak
+        currentRigidbody.simulated = false;
 
-        
+        // Hýz artýþý
+        burgerSpeed += burgerSpeedIncrement;
     }
 }
