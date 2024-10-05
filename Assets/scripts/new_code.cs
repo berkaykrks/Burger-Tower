@@ -6,6 +6,7 @@ public class BurgerStacker : MonoBehaviour
 {
     [SerializeField] private Transform burgerPrefab;
     [SerializeField] private Transform burgerHolder;
+    [SerializeField] private Camera mainCamera; // Kamerayý referans alacaðýz
 
     private Transform currentBurger = null;
     private Rigidbody2D currentRigidbody;
@@ -14,12 +15,19 @@ public class BurgerStacker : MonoBehaviour
     public float burgerSpeedIncrement = 0.5f;
     public int burgerDirection = 1;
 
-    public Vector2 burgerStartPos;
+    public Vector2 burgerStartPos; // Burgerin baþlangýç pozisyonu
     public int xLimit = 5;
 
     // Ýlk burgeri referans olarak tutmak için
     private Transform firstBurger = null;
     public float tolerance = 0.5f; // Burgerlerin hizalanmasý için tolerans deðeri
+
+    private int spawnCount = 0; // Her 3 spawn'da bir kontrol için sayaç
+    public float cameraMoveStep = 5f; // Kamera ve spawn pozisyonunun her hareketinde yukarý çýkacaðý mesafe
+    public float moveDuration = 1f; // Kameranýn yukarýya çýkýþ süresi (yumuþak geçiþ için)
+
+    private bool isMovingCamera = false; // Kamera hareket ederken baþka hareket olmasýn diye kontrol
+    private Vector3 cameraTargetPosition; // Kameranýn gitmek istediði hedef pozisyon
 
     void Start()
     {
@@ -28,7 +36,7 @@ public class BurgerStacker : MonoBehaviour
 
     void Update()
     {
-        if (currentBurger)
+        if (currentBurger && !isMovingCamera) // Kamera hareket halindeyken burgerler hareket etmesin
         {
             // Burgerin hareket etmesi
             float moveAmount = Time.deltaTime * burgerSpeed * burgerDirection;
@@ -58,16 +66,26 @@ public class BurgerStacker : MonoBehaviour
 
                     if (xDifference <= tolerance)
                     {
-                        Debug.Log("iyi!");
+                        Debug.Log("Burger is aligned correctly!");
                     }
                     else
                     {
-                        Debug.Log("fark " + xDifference);
+                        Debug.Log("Burger is not aligned! X Difference: " + xDifference);
                     }
                 }
 
                 currentBurger = null; // Mevcut burgeri sýfýrla
-                SpawnNewBurger(); // Yeni burger spawn et
+                spawnCount++; // Her spawn sonrasý sayaç artýþý
+
+                // Her 3 burger spawn'da bir kamera ve spawn pozisyonunu yukarý kaydýr
+                if (spawnCount % 6 == 0)
+                {
+                    StartCoroutine(MoveCameraUp());
+                }
+                else
+                {
+                    SpawnNewBurger(); // Yeni burger spawn et
+                }
             }
         }
     }
@@ -84,5 +102,34 @@ public class BurgerStacker : MonoBehaviour
 
         // Hýz artýþý
         burgerSpeed += burgerSpeedIncrement;
+    }
+
+    // Kamera ve spawn pozisyonunu yukarý hareket ettiren coroutine
+    private IEnumerator MoveCameraUp()
+    {
+        isMovingCamera = true; // Kamera hareket ederken baþka iþlem yapýlmasýn
+
+        Vector3 startPos = mainCamera.transform.position; // Kameranýn mevcut pozisyonu
+        Vector3 targetPos = startPos + new Vector3(0, cameraMoveStep, 0); // Kameranýn hedef pozisyonu
+
+        Vector2 newBurgerStartPos = burgerStartPos + new Vector2(0, cameraMoveStep); // Burgerin yeni spawn pozisyonu
+
+        float elapsedTime = 0f;
+
+        // Kamerayý ve spawn pozisyonunu yumuþak þekilde yukarý taþý
+        while (elapsedTime < moveDuration)
+        {
+            mainCamera.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / moveDuration);
+            burgerStartPos = Vector2.Lerp(burgerStartPos, newBurgerStartPos, elapsedTime / moveDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // Hareket bittiðinde tam olarak hedef pozisyona ayarla
+        mainCamera.transform.position = targetPos;
+        burgerStartPos = newBurgerStartPos;
+
+        isMovingCamera = false; // Kamera hareketi bitti
+        SpawnNewBurger(); // Yeni burger spawn et
     }
 }
