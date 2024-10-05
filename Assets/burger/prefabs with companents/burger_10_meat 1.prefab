@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 3418153076817500181}
   - component: {fileID: 3113511905161147409}
   - component: {fileID: 3884811764640244783}
+  - component: {fileID: -7842257702974710528}
   m_Layer: 0
   m_Name: burger_10_meat 1
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,11 +131,11 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 636170156954434535}
   m_BodyType: 0
-  m_Simulated: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -146,5 +147,24 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &-7842257702974710528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 636170156954434535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b17e8b01d4a421a488df8530c90a854a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  burger_prefab: {fileID: 0}
+  burger_holder: {fileID: 0}
+  burger_speed: 8
+  "burger_speed_\u0131ncerement": 0.5
+  burger_direction: 1
+  burger_start_pos: {x: 0, y: 0}
+  x_limit: 5
